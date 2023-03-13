@@ -1,0 +1,6 @@
+{:deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        org.clojure/data.json {:mvn/version "2.4.0"}
+        org.clojure/tools.cli {:mvn/version "1.0.206"}
+        org.soulspace.clj/clj.base {:mvn/version "0.8.3"}
+        org.soulspace.clj/cmp.poi {:mvn/version "0.6.2"}
+        org.soulspace.clj/tools.repository {:mvn/version "0.3.4"}}}
