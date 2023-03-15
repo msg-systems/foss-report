@@ -9,6 +9,10 @@ The foss-report can also generate diff report on two versions of the repositorie
 
 Currently THIRD-PARTY.txt reports generated with Apache Maven are supported.
 
+As there is no standard way of naming specific licenses in project files, the foss-report tool uses a configuration file named 'txt2spdx.json'. It contains the mapping of the license names as provided by the project (e.g. in the pom.xml) to the SPDX id of the license. The SPDX id of the license can be used to get further information for the license, like the license text or OSS/FSF compatibility.
+
+
+
 
 Build
 -----
@@ -31,7 +35,7 @@ You can run the foss-tool from project directory with [leiningen](https://leinin
 lein run [options]
 ```
 
-Run the uberjar with java:
+You can also run the uberjar with java:
 ```
 java -jar <path-to-jar>\foss-report.jar [options]
 ```
