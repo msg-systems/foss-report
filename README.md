@@ -25,10 +25,16 @@ lein uberjar
 
 Usage
 -----
-Generate Thirdparty files with maven, e.g.
+You can generate the Thirdparty file from the directory of a maven project with th maven license plugin, e.g.
 ```
 mvn license:add-third-party -Dlicense.excludedScopes=test 
 ```
+
+If you have a directory with multiple maven projects, you can use the following bash command to generate the Thirdparty files for all projects, e.g.
+```
+find git -maxdepth 3 -type f -name pom.xml -execdir mvn license:add-third-party -Dlicense.excludedScopes=test \;
+```
+
 
 You can run the foss-tool from project directory with [leiningen](https://leiningen.org/):
 ```
