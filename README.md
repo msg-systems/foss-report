@@ -5,18 +5,28 @@ Generate various reports regarding the FOSS licenses used in a project.
 The foss-report tool works on license report generated on the repositories of a project.
 foss-report collects the license reports from all repositories in a given folder and aggregates the artifact and license information in a single collection.
 For this collection reports can be generated and the licenses and source artifacts can be downloaded.
-The foss-report can also generate diff on two versions of the repositories or reports.
+The foss-report can also generate diff report on two versions of the repositories or reports.
 
 Currently THIRD-PARTY.txt reports generated with Apache Maven are supported.
 
+
+Build
+-----
+The foss-tool uses [leiningen](https://leiningen.org/) as a build tool.
+With leiningen installed, you can generate a jar containing all the dependencies with
+```
+lein uberjar
+```
+
+
 Usage
 -----
-Generate Thirdparty files with maven
+Generate Thirdparty files with maven, e.g.
 ```
 mvn license:add-third-party -Dlicense.excludedScopes=test 
 ```
 
-Run from project directory with [leiningen](https://leiningen.org/):
+You can run the foss-tool from project directory with [leiningen](https://leiningen.org/):
 ```
 lein run [options]
 ```
