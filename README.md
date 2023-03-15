@@ -35,15 +35,14 @@ If you have a directory with multiple maven projects, you can use the following 
 find git -maxdepth 3 -type f -name pom.xml -execdir mvn license:add-third-party -Dlicense.excludedScopes=test \;
 ```
 
-
-You can run the foss-tool from project directory with [leiningen](https://leiningen.org/):
-```
-lein run [options]
-```
-
-You can also run the uberjar with java:
+You can run the uberjar with java:
 ```
 java -jar <path-to-jar>\foss-report.jar [options]
+```
+
+You can also run the foss-tool from build directory with [leiningen](https://leiningen.org/) for testing:
+```
+lein run [options]
 ```
 
 Options
