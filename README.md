@@ -2,8 +2,20 @@ FOSS Reporting
 ==============
 Generate various reports regarding the FOSS licenses used in a project.
 
+The foss-report tool works on license report generated on the repositories of a project.
+foss-report collects the license reports from all repositories in a given folder and aggregates the artifact and license information in a single collection.
+For this collection reports can be generated and the licenses and source artifacts can be downloaded.
+The foss-report can also generate diff on two versions of the repositories or reports.
+
+Currently THIRD-PARTY.txt reports generated with Apache Maven are supported.
+
 Usage
 -----
+Generate Thirdparty files with maven
+```
+mvn license:add-third-party -Dlicense.excludedScopes=test 
+```
+
 Run from project directory with [leiningen](https://leiningen.org/):
 ```
 lein run [options]
@@ -16,19 +28,23 @@ java -jar <path-to-jar>\foss-report.jar [options]
 
 Options
 ```
-  -b, --base-dir DIRNAME                                  Base directory. If set, the paths are relative to this directory.
-  -m, --maven-dir DIRNAME        data                     Directory of the maven projects
-  -x, --excel-file FILENAME      data/FOSS.xlsm           Name of the excel file with FOSS dependency information
-  -t, --excel-template FILENAME  data/FOSS_Template.xlsm  Name of the excel template for FOSS dependency information
-  -i, --spdx-file FILENAME       data/txt2spdx.json       Name of the license names to SPDX ID mapping file
-  -r, --foss-report                                       Generate a FOSS report
-  -d, --foss-diff                                         Generate a FOSS diff report
-  -u, --update-spdx-mapping                               Generate an updated license names to SPDX ID mapping
-  -l, --download-licenses                                 Download the relevant licenses from SPDX
-  -L, --licenses-dir DIRNAME     data/licenses            Directory for the download of licenses from SPDX
-  -f, --report-format FORMAT     xls                      The output format for reports (xls, json, stdout)
-  -v, --versions                                          Process each artifact version
-  -h, --help                                              Print usage information
+  -b, --base-dir DIRNAME                     Base directory. If set, the paths are relative to this directory.
+  -c, --current FILENAME                     Name of the file or directory with current artifact information.
+  -p, --previous FILENAME                    Name of the file or directory with current artifact information.
+  -i, --spdx-file FILENAME    txt2spdx.json  Name of the license names to SPDX ID mapping file.
+  -r, --foss-report                          Generate a FOSS report.
+  -d, --foss-diff                            Generate a FOSS diff report. Needs current and previous input.
+  -u, --update-spdx-mapping                  Generate an updated license names to SPDX ID mapping.
+  -l, --download-licenses                    Download the relevant licenses from SPDX.
+  -L, --licenses-dir DIRNAME  licenses       Directory for the download of licenses from SPDX.
+  -s, --download-sources                     Download the relevant source jars.
+  -S, --sources-dir DIRNAME   sources        Directory for the download of source jars.
+  -y, --scan-sources                         Scan the sources for copyrights and notices.
+  -f, --report-format FORMAT  xls            The output format for reports (xls, json, stdout).
+  -v, --versions                             Process each artifact version.
+  -g, --gpl-only                             Reports the list of GPL only licensed artifacts.
+  -n, --no-foss-license                      Reports the list of artifacts without FOSS license.
+  -h, --help                                 Print usage information.
 ```
 
 
@@ -37,6 +53,7 @@ Problems
 
 Errors accessing spdx.org (e.g. Exception in thread "main" java.io.FileNotFoundException: https://spdx.org/licenses/CC0.json)
 -> Edit the txt2spdx.json file to fix the missing entry.
+
 
 Problems with current maven plugins
 -----------------------------------
