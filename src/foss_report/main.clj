@@ -19,19 +19,20 @@ the excel sheet with the information for license reports.")
   [["-b" "--base-dir DIRNAME" "Base directory. If set, the paths are relative to this directory."]
    ["-c" "--current FILENAME" "Name of the file or directory with current artifact information."]
    ["-p" "--previous FILENAME" "Name of the file or directory with current artifact information."]
-   ["-i" "--spdx-file FILENAME" "Name of the license names to SPDX ID mapping file." :default "data/txt2spdx.json"]
+   ["-i" "--spdx-file FILENAME" "Name of the license names to SPDX ID mapping file." :default "txt2spdx.json"]
    ["-r" "--foss-report" "Generate a FOSS report." :default false]
    ["-d" "--foss-diff" "Generate a FOSS diff report. Needs current and previous input." :default false]
    ["-u" "--update-spdx-mapping" "Generate an updated license names to SPDX ID mapping." :default false]
    ["-l" "--download-licenses" "Download the relevant licenses from SPDX." :default false]
-   ["-L" "--licenses-dir DIRNAME" "Directory for the download of licenses from SPDX." :default "data/licenses"]
+   ["-L" "--licenses-dir DIRNAME" "Directory for the download of licenses from SPDX." :default "licenses"]
    ["-s" "--download-sources" "Download the relevant source jars." :default false]
-   ["-S" "--sources-dir DIRNAME" "Directory for the download of source jars." :default "data/sources"]
+   ["-S" "--sources-dir DIRNAME" "Directory for the download of source jars." :default "sources"]
    ["-y" "--scan-sources" "Scan the sources for copyrights and notices." :default false]
    ["-f" "--report-format FORMAT" "The output format for reports (xls, json, stdout)." :default "xls"]
    ["-v" "--versions" "Process each artifact version." :default true]
    ["-g" "--gpl-only" "Reports the list of GPL only licensed artifacts."]
    ["-n" "--no-foss-license" "Reports the list of artifacts without FOSS license."]
+   [nil  "--debug" "Prints some debug information"]
    ["-h" "--help" "Print usage information."]])
 
 (defn path
@@ -142,7 +143,9 @@ the excel sheet with the information for license reports.")
   (let [{:keys [options exit-message success]} (validate-args args cli-opts)]
     ; make options globally available 
     (fo/set-options options)
-    (println @fo/options)
+    (when (fo/get-option :debug)
+      (println "Parsed options:")
+      (println @fo/options))
     (if exit-message
       ; exit with message
       (exit (if success 0 1) exit-message)
