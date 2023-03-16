@@ -78,8 +78,8 @@
   "Writes the map of the POM license to SPDX id mapping as JSON."
   [filename m]
   (->> (dissoc m nil)
-      (json/write-str)
-      (spit filename)))
+       (json/write-str)
+       (spit filename)))
 
 (defn update-mvn-spdx-mapping
   "Updates the JSON POM license to SPDX id mapping."
@@ -115,8 +115,7 @@
   (read-mvn-spdx-mapping "txt2spdx.json")
   (read-mvn-spdx-mapping "data/txt2spdx.json")
   (spdx-ids-for-licenses (read-mvn-spdx-mapping "data/txt2spdx.json") {:licenses #{"Apache License, 2.0; EPL 2.0; Public Domain; The GNU General Public License (GPL), Version 2, With Classpath Exception"}})
-  (spdx-ids-for-licenses (read-mvn-spdx-mapping "data/txt2spdx.json") {:licenses #{"Apache License, 2.0" "EPL 2.0" "Public Domain" "The GNU General Public License (GPL), Version 2, With Classpath Exception"}})
-  )
+  (spdx-ids-for-licenses (read-mvn-spdx-mapping "data/txt2spdx.json") {:licenses #{"Apache License, 2.0" "EPL 2.0" "Public Domain" "The GNU General Public License (GPL), Version 2, With Classpath Exception"}}))
 
 ;;;
 ;;; handle jars
@@ -130,7 +129,7 @@
   [sources-dir artifact]
   (when-not (sf/exists? sources-dir)
     (sf/create-dir (io/as-file sources-dir)))
-  
+
   (when-not (repo/local-artifact? "sources" "jar" artifact)
     (repo/cache-artifact "sources" "jar" artifact))
   (if (repo/local-artifact? "sources" "jar" artifact)
@@ -190,24 +189,26 @@
   "Reads the content of the file NOTICE.txt, if it exists."
   []
   (when (sf/exists? (io/as-file "scandir/NOTICE.txt"))
-        (slurp (io/as-file "scandir/NOTICE.txt"))))
+    (slurp (io/as-file "scandir/NOTICE.txt"))))
 
 (defn scan-sources-jar
   "Unzips the source jar of the artifact and scans for copyright and notice information."
   [artifact]
-  (println "scanning source jar for" (repo/artifact-version-key artifact))
+  (when (fo/get-option :debug)
+    (println "scanning source jar for" (repo/artifact-version-key artifact)))
+
   (if (and (fo/get-option :scan-sources) (repo/local-artifact? "sources" "jar" artifact))
     (do
       (sf/create-dir (io/as-file "scandir"))
       (z/unzip-file (str (repo/artifact-version-local-path artifact)
                          "/" (repo/artifact-filename "sources" "jar" artifact)) "scandir")
-      
+
       (let [notice (read-notice)
             updated (update artifact :copyrights set/union (copyrights-from-dir "scandir"))]
         (println (:copyrights updated))
         (sf/delete-dir (io/as-file "scandir"))
         updated))
-      artifact))
+    artifact))
 
 ; evaluate the forms in REPL for quick tests
 (comment
@@ -270,8 +271,7 @@
   (repository-url "https://github.com/lsolbach")
   (repository-url "https://spark.apache.org/")
   (contributors-url "https://github.com/lsolbach")
-  (contributors-url "https://spark.apache.org/")
-  )
+  (contributors-url "https://spark.apache.org/"))
 
 (defn license-unknown?
   "Returns true, if the artifact has no known license."
@@ -368,7 +368,7 @@
 (defn update-artifact
   "Enhances the artifact with derived information."
   ([spdx-mapping a]
-   (assoc a 
+   (assoc a
           :spdx-ids (apply set/union
                            (map #(spdx-mapping %) (:licenses a))))))
 
@@ -401,7 +401,7 @@
 (defn artifacts-from-third-party-file
   "Reads the licenses from a maven 'THIRD-PARTY.txt' file. Returns a set of maps with the artifact information."
   [file]
-  (let [component (component-from-path (sf/path file ))] ; extract the component from the path of the third party file
+  (let [component (component-from-path (sf/path file))] ; extract the component from the path of the third party file
     (->> (slurp file)
          (str/split-lines)
          (drop 2) ; first 2 lines don't contain dependencies
@@ -438,8 +438,7 @@
   (update-mvn-spdx-mapping "data/txt2spdx.json" "data")
   (->> (artifacts-from-third-party-files "data")
        (map (partial spdx-ids-for-licenses (read-mvn-spdx-mapping "data/txt2spdx.json")))
-       (apply set/union))
-  )
+       (apply set/union)))
 
 ;; 
 ;; handle the FOSS excel files
@@ -449,8 +448,7 @@
   (str/split licenses #"; "))
 
 (comment
-  (split-excel-licenses "EPL 2.0; GPL2 w/ CPE")
-  )
+  (split-excel-licenses "EPL 2.0; GPL2 w/ CPE"))
 
 (defn parse-excel-row
   "Parses a FOSS excel row into an artifact map."
@@ -475,8 +473,7 @@
    :license-delivery license-delivery
    :disclaimer disclaimer
    :repository repository
-   :notice ""
-   })
+   :notice ""})
 
 (defn artifacts-from-excel
   "Returns the set of artifact maps from the given excel."
@@ -515,5 +512,4 @@
         (map (partial update-artifact (read-mvn-spdx-mapping "data/txt2spdx.json")))
         (artifacts-from-third-party-files "data"))
   (print (diff-deps (artifacts-from-third-party-files "data") (artifacts-from-excel "data/FOSS.xlsm")))
-  (print (diff-deps (artifacts-from-third-party-files "data") (artifacts-from-excel "data/FOSS.xlsm") true))
-  )
+  (print (diff-deps (artifacts-from-third-party-files "data") (artifacts-from-excel "data/FOSS.xlsm") true)))
