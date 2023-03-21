@@ -7,12 +7,30 @@
             [org.soulspace.tools.spdx :as spdx]
             [org.soulspace.cmp.poi.excel :as xl]
             [org.soulspace.clj.file :as sf]
-            [foss-report.options :as fo]
             [foss-report.zip :as z]))
 
 ;;;;
 ;;;; base functionality for handling FOSS licenses
 ;;;;
+
+;;; 
+;;; handle options
+;;;
+(def options "Reference variable for the options initialized with an empty map."
+  (ref {}))
+
+(defn set-options
+  "Set the opts as global var for reference."
+  [opts]
+  (dosync
+   (ref-set options opts)))
+
+(defn get-option
+  "Returns the value of the option k by dereferencing the options ref."
+  ([k]
+   (@options k)))
+
+
 
 ;;;
 ;;; handle licenses 
@@ -194,10 +212,10 @@
 (defn scan-sources-jar
   "Unzips the source jar of the artifact and scans for copyright and notice information."
   [artifact]
-  (when (fo/get-option :debug)
+  (when (get-option :debug)
     (println "scanning source jar for" (repo/artifact-version-key artifact)))
 
-  (if (and (fo/get-option :scan-sources) (repo/local-artifact? "sources" "jar" artifact))
+  (if (and (get-option :scan-sources) (repo/local-artifact? "sources" "jar" artifact))
     (do
       (sf/create-dir (io/as-file "scandir"))
       (z/unzip-file (str (repo/artifact-version-local-path artifact)
@@ -440,10 +458,11 @@
        (map (partial spdx-ids-for-licenses (read-mvn-spdx-mapping "data/txt2spdx.json")))
        (apply set/union)))
 
-;; 
-;; handle the FOSS excel files
-;;
+;;; 
+;;; handle the FOSS excel files
+;;;
 (defn split-excel-licenses
+  "Split the licenses in the excel cell."
   [licenses]
   (str/split licenses #"; "))
 
@@ -503,8 +522,8 @@
       :only1 (map #(map1 %) only1)
       :only2 (map #(map2 %) only2)})))
 
-; evaluate the forms in REPL for quick tests
 (comment
+  ; evaluate the forms in REPL for quick tests
   (artifacts-from-third-party-files "data")
   (artifacts-from-excel "data/FOSS.xlsm")
   (merge-with set/union (read-mvn-spdx-mapping "data2/txt2spdx.json") (new-spdx-mapping (artifacts-from-excel "data2/FOSS_Report.xlsx")))
@@ -512,4 +531,5 @@
         (map (partial update-artifact (read-mvn-spdx-mapping "data/txt2spdx.json")))
         (artifacts-from-third-party-files "data"))
   (print (diff-deps (artifacts-from-third-party-files "data") (artifacts-from-excel "data/FOSS.xlsm")))
-  (print (diff-deps (artifacts-from-third-party-files "data") (artifacts-from-excel "data/FOSS.xlsm") true)))
+  (print (diff-deps (artifacts-from-third-party-files "data") (artifacts-from-excel "data/FOSS.xlsm") true))
+  )

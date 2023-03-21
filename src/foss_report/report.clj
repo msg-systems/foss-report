@@ -2,8 +2,7 @@
   (:require [foss-report.core :as fc]
             [clojure.string :as str]
             [clojure.data.json :as json]
-            [org.soulspace.cmp.poi.excel :as xl]
-            [foss-report.options :as fo])
+            [org.soulspace.cmp.poi.excel :as xl])
   (:import [java.time Instant]
            [java.time.format DateTimeFormatter]
            [java.time.temporal ChronoUnit]))
@@ -168,11 +167,32 @@
   [artifacts]
   (println (json/json-str (filter fc/license-unknown? artifacts))))
 
+(comment
+  (defmulti foss-report "Generates a FOSS report for the given artifacts." #(fo/get-option :format))
+  (defmulti diff-report "Generates a FOSS diff report for the given artifacts." #(fo/get-option :format))
+  (defmulti strong-copyleft-report "Generates FOSS stron copyleft report for the given artifacts." #(fo/get-option :format))
+  (defmulti no-license-report "Generates the FOSS report for the given artifacts." #(fo/get-option :format))
+
+  (defmethod foss-report :xls
+    [artifacts]
+    (xls-foss-report (timestamped-filename "FOSS_Report_" "xlsx") artifacts))
+
+  (defmethod foss-report :json
+    [artifacts]
+    (json/json-str artifacts))
+
+  (defmethod foss-report :edn
+    [artifacts])
+
+  (defmethod foss-report :csv
+    [artifacts])
+  )
+
 (defn foss-report
   "Generates the FOSS report for the given artifacts."
   [artifacts]
   (println "Generating FOSS report.")
-  (case (fo/get-option :report-format)
+  (case (fc/get-option :report-format)
     "xls" (xls-foss-report artifacts)
     "json" (json-foss-report artifacts)
     "stdout" (print-foss-report artifacts)
@@ -182,19 +202,18 @@
   "Generates the Diff report for the given current and previous artifacts."
   [current-artifacts previous-artifacts]
   (println "Generating Diff report.")
-  (let [diff (fc/diff-deps current-artifacts previous-artifacts (fo/get-option :versions))]
-  (case (fo/get-option :report-format)
+  (let [diff (fc/diff-deps current-artifacts previous-artifacts (fc/get-option :versions))]
+  (case (fc/get-option :report-format)
     "xls" (xls-diff-report diff)
     "json" (json-diff-report diff)
     "stdout" (json-diff-report diff)
     :else (print-diff-report diff))))
 
-
 (defn strong-copyleft-report
   "Generates the Strong Copyleft Only report for the given artifacts."
   [artifacts]
   (println "Generating Strong Copyleft Only report.")
-  (case (fo/get-option :report-format)
+  (case (fc/get-option :report-format)
     "xls" (xls-gpl-only-report artifacts)
     "json" (json-gpl-only-report artifacts)
     "stdout" (print-gpl-only-report artifacts)
@@ -204,7 +223,7 @@
   "Generates the No License report for the given artifacts."
   [artifacts]
   (println "Generating No License report.")
-  (case (fo/get-option :report-format)
+  (case (fc/get-option :report-format)
     "xls" (xls-no-foss-report artifacts)
     "json" (json-no-foss-report artifacts)
     "stdout" (print-no-foss-report artifacts)

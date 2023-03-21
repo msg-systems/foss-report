@@ -5,7 +5,6 @@
             [org.soulspace.clj.file :as sf]
             [org.soulspace.tools.repo :as repo]
             [foss-report.core :as fc]
-            [foss-report.options :as fo]
             [foss-report.report :as fr])
   (:gen-class))
 
@@ -109,43 +108,43 @@ the excel sheet with the information for license reports.")
 (defn handle
   "Handle options and generate the requested outputs."
   []
-  (let [base-dir (fo/get-option :base-dir)
-        key-fn (if (fo/get-option :versions) repo/artifact-version-key repo/artifact-key)
-        spdx-mapping (fc/read-mvn-spdx-mapping (path base-dir (fo/get-option :spdx-file)))
-        current-artifacts (compute-artifacts (path base-dir (fo/get-option :current)) key-fn spdx-mapping)]
-    (when (fo/get-option :foss-report)
+  (let [base-dir (fc/get-option :base-dir)
+        key-fn (if (fc/get-option :versions) repo/artifact-version-key repo/artifact-key)
+        spdx-mapping (fc/read-mvn-spdx-mapping (path base-dir (fc/get-option :spdx-file)))
+        current-artifacts (compute-artifacts (path base-dir (fc/get-option :current)) key-fn spdx-mapping)]
+    (when (fc/get-option :foss-report)
         ; generate FOSS report
       (fr/foss-report current-artifacts))
-    (when (fo/get-option :foss-diff)
+    (when (fc/get-option :foss-diff)
         ; generate FOSS diff reports
-      (let [previous-artifacts (compute-artifacts (path base-dir (fo/get-option :previous)) key-fn spdx-mapping)]
+      (let [previous-artifacts (compute-artifacts (path base-dir (fc/get-option :previous)) key-fn spdx-mapping)]
         (fr/diff-report current-artifacts previous-artifacts)))
-    (when (fo/get-option :gpl-only)
+    (when (fc/get-option :gpl-only)
         ; generate Strong Copyleft only report
       (fr/strong-copyleft-report current-artifacts))
-    (when (fo/get-option :no-foss-license)
+    (when (fc/get-option :no-foss-license)
         ; generate No License report
       (fr/no-license-report current-artifacts))
-    (when (fo/get-option :update-spdx-mapping)
+    (when (fc/get-option :update-spdx-mapping)
       ; generate an updated spdx mapping
-      (fc/update-mvn-spdx-mapping (path base-dir (fo/get-option :spdx-file)) current-artifacts))
-    (when (fo/get-option :download-licenses)
+      (fc/update-mvn-spdx-mapping (path base-dir (fc/get-option :spdx-file)) current-artifacts))
+    (when (fc/get-option :download-licenses)
       ; download used FOSS license texts
-      (fc/download-spdx-licenses (path base-dir (fo/get-option :licenses-dir))
+      (fc/download-spdx-licenses (path base-dir (fc/get-option :licenses-dir))
                                  (fc/distinct-spdx-ids spdx-mapping current-artifacts)))
-    (when (fo/get-option :download-sources)
+    (when (fc/get-option :download-sources)
       ; download the source jars for the FOSS artifacts
-      (fc/download-sources (path base-dir (fo/get-option :sources-dir)) current-artifacts))))
+      (fc/download-sources (path base-dir (fc/get-option :sources-dir)) current-artifacts))))
 
 (defn -main
   "Main function as entry point for foss report generation."
   [& args]
   (let [{:keys [options exit-message success]} (validate-args args cli-opts)]
     ; make options globally available 
-    (fo/set-options options)
-    (when (fo/get-option :debug)
+    (fc/set-options options)
+    (when (fc/get-option :debug)
       (println "Parsed options:")
-      (println @fo/options))
+      (println @fc/options))
     (if exit-message
       ; exit with message
       (exit (if success 0 1) exit-message)

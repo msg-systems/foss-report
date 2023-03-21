@@ -3,7 +3,6 @@
             [clojure.data.json :as json]
             [clojure.data.csv :as csv]))
 
-
 (defn write-edn
   "Writes the data in EDN format to the given writer."
   [writer data]
