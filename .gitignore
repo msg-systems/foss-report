@@ -11,6 +11,7 @@ target/
 **/pom.xml
 
 ## VS Code
+.vscode/
 .calva/
 .lsp/
 .cpcache/
