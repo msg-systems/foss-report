@@ -11,7 +11,7 @@
                  [org.clojure/data.json "2.4.0"]
                  [org.clojure/data.csv "1.0.1"]
                  [org.clojure/tools.cli "1.0.206"]
-                 [org.soulspace.clj/clj.base "0.9.1"]
+                 [org.soulspace.clj/clj.java "0.9.1"]
                  [org.soulspace.clj/cmp.poi "0.6.4"]
                  [org.soulspace.clj/tools.repository "0.3.4"]]
   
