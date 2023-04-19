@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.cli :refer [parse-opts]]
-            [org.soulspace.clj.file :as sf]
+            [org.soulspace.clj.java.file :as sf]
             [org.soulspace.tools.repo :as repo]
             [foss-report.core :as fc]
             [foss-report.report :as fr])
