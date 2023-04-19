@@ -1,13 +1,11 @@
 (ns foss-report.core-test
-  (:require [clojure.test :refer [deftest are is run-tests]]
+  (:require [clojure.test :refer :all]
             [foss-report.core :refer :all]))
 
-(comment
-  (deftest merge-spdx-mapping-test
-    (are [x y] (= x y)
-      (key {"a" #{"b"}}) "a"
-      (val {"a" #{"b"}}) #{"b"}))
-  )
+(deftest merge-spdx-mapping-test
+  (are [x y] (= x y)
+    "a" (key {"a" #{"b"}})
+    #{"b"} (val {"a" #{"b"}})))
 
 (comment
   (run-tests))

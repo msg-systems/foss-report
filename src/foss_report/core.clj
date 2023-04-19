@@ -312,8 +312,10 @@
 ;; handle maven thirdparty information
 ;;
 (defn merge-artifacts
-  "Merges maven third party artifacts.
+  "Merges artifacts.
+
    Called without arguments the function returns an empty artifact.
+   Called with just one artifact, the artifact is returned as is.
    Called with two artifacts the function returns a new artifact with the information merged."
   ([]
    {:components #{}
@@ -331,6 +333,7 @@
     :copyrights #{}
     :repository nil
     :contributors nil})
+  ([a] a)
   ([a b]
    {:components (set/union (:components a) (:components b)) ; TODO concat?
     :group-id (:group-id a)
