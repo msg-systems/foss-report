@@ -17,13 +17,12 @@
 ;;; handle options
 ;;;
 (def options "Reference variable for the options initialized with an empty map."
-  (ref {}))
+  (atom {}))
 
 (defn set-options
   "Set the opts as global var for reference."
   [opts]
-  (dosync
-   (ref-set options opts)))
+   (reset! options opts))
 
 (defn get-option
   "Returns the value of the option k by dereferencing the options ref."
@@ -237,7 +236,7 @@
   (re-matches copyright-pattern "   (C) Ludger Solbach")
   (re-matches copyright-pattern "   © 2020 Ludger Solbach")
   (re-matches copyright-pattern "   (C) 2023 Ludger Solbach. All rights reserved.")
-  (copyrights-from-file "C:/devel/code/foss/src/foss_report/core.clj"))
+  (copyrights-from-file "src/foss_report/core.clj"))
 
 ;;;
 ;;; handle artifact information
