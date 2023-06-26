@@ -1,6 +1,6 @@
-FOSS Reporting
-==============
-Generate various reports regarding the FOSS licenses used in a project.
+FOSS Report
+===========
+Foss Report generates various reports regarding the dependencies and FOSS licenses used in a project.
 
 The foss-report tool works on license report generated on the repositories of a project.
 foss-report collects the license reports from all repositories in a given folder and aggregates the artifact and license information in a single collection.
@@ -10,8 +10,6 @@ The foss-report can also generate diff report on two versions of the repositorie
 Currently THIRD-PARTY.txt reports generated with Apache Maven are supported.
 
 As there is no standard way of naming specific licenses in project files, the foss-report tool uses a configuration file named 'txt2spdx.json'. It contains the mapping of the license names as provided by the project (e.g. in the pom.xml) to the SPDX id of the license. The SPDX id of the license can be used to get further information for the license, like the license text or OSS/FSF compatibility.
-
-
 
 
 Build
@@ -25,12 +23,13 @@ lein uberjar
 
 Usage
 -----
+
 You can generate the Thirdparty file from the directory of a maven project with th maven license plugin, e.g.
 ```
 mvn license:add-third-party -Dlicense.excludedScopes=test 
 ```
 
-If you have a directory with multiple maven projects, you can use the following bash command to generate the Thirdparty files for all projects, e.g.
+If you have a directory with multiple maven projects, you can use the following bash command to generate the Thirdparty files for all projects in a directory, e.g. for repositories residing in the git directory
 ```
 find git -maxdepth 3 -type f -name pom.xml -execdir mvn license:add-third-party -Dlicense.excludedScopes=test \;
 ```
@@ -45,8 +44,11 @@ You can also run the foss-tool from build directory with [leiningen](https://lei
 lein run [options]
 ```
 
-Options
 ```
+Options:
+
+  Option                      Default        Description
+
   -b, --base-dir DIRNAME                     Base directory. If set, the paths are relative to this directory.
   -c, --current FILENAME                     Name of the file or directory with current artifact information.
   -p, --previous FILENAME                    Name of the file or directory with current artifact information.
@@ -66,6 +68,8 @@ Options
   -h, --help                                 Print usage information.
 ```
 
+THe foss-report tool uses a mapping file from the various forms of a license to its SPDX ID,
+which acts as a canonical identifier for the most common licenses.
 
 Problems
 --------
@@ -74,9 +78,3 @@ Errors accessing spdx.org (e.g. Exception in thread "main" java.io.FileNotFoundE
 -> Edit the txt2spdx.json file to fix the missing entry.
 
 
-Problems with current maven plugins
------------------------------------
-* POM information
-  * license information in the POM not normed, unreliable or uncomplete
-* Maven plugins
-  * generated reports are not machine readable

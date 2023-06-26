@@ -80,6 +80,8 @@ the excel sheet with the information for license reports.")
       {:exit-message (error-msg "No previous file or directory specified to diff against.")}
       (= 0 (count arguments)) ; no args
       {:options options}
+      options
+      {:options options}
       :else ; failed custom validation => exit with usage summary
       {:exit-message (usage-msg appname description summary)})))
 
@@ -140,6 +142,7 @@ the excel sheet with the information for license reports.")
   "Main function as entry point for foss report generation."
   [& args]
   (let [{:keys [options exit-message success]} (validate-args args cli-opts)]
+    (println "Options:" options)
     ; make options globally available 
     (fc/set-options options)
     (when (fc/get-option :debug)
@@ -148,11 +151,11 @@ the excel sheet with the information for license reports.")
     (if exit-message
       ; exit with message
       (exit (if success 0 1) exit-message)
-      ; handle options and generate the requested outputs
+      ; handle options and generate the requested outputs 
       (handle))))
 
 (comment
-  (-main "--debug" "-b" ".." "-i" "foss-report/txt2spdx.json")
+  (-main "--debug" "-b" ".." "-r" "-f" "xls" "-i" "foss-report/txt2spdx.json")
   (-main "-h")
   (-main "-y")
   )
