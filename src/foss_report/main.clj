@@ -152,6 +152,7 @@ the excel sheet with the information for license reports.")
       (handle))))
 
 (comment
+  (-main "--debug" "-b" ".." "-i" "foss-report/txt2spdx.json")
   (-main "-h")
   (-main "-y")
   )

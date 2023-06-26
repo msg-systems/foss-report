@@ -5,8 +5,9 @@
             [clojure.java.io :as io]
             [org.soulspace.tools.repo :as repo]
             [org.soulspace.tools.spdx :as spdx]
+            [org.soulspace.tools.maven.core :as mvn]
             [org.soulspace.cmp.poi.excel :as xl]
-            [org.soulspace.clj.file :as sf]
+            [org.soulspace.clj.java.file :as sf]
             [foss-report.zip :as z]))
 
 ;;;;
@@ -147,11 +148,11 @@
   (when-not (sf/exists? sources-dir)
     (sf/create-dir (io/as-file sources-dir)))
 
-  (when-not (repo/local-artifact? "sources" "jar" artifact)
-    (repo/cache-artifact "sources" "jar" artifact))
-  (if (repo/local-artifact? "sources" "jar" artifact)
-    (io/copy (io/as-file (str (repo/artifact-version-local-path artifact) "/" (repo/artifact-filename "sources" "jar" artifact)))
-             (io/as-file (str sources-dir "/" (repo/artifact-filename "sources" "jar" artifact))))
+  (when-not (mvn/local-artifact? "sources" "jar" artifact)
+    (mvn/cache-artifact "sources" "jar" artifact))
+  (if (mvn/local-artifact? "sources" "jar" artifact)
+    (io/copy (io/as-file (str (mvn/artifact-version-local-path artifact) "/" (mvn/artifact-filename "sources" "jar" artifact)))
+             (io/as-file (str sources-dir "/" (mvn/artifact-filename "sources" "jar" artifact))))
     (println "missing sources for " (repo/artifact-version-key artifact))))
 
 (defn download-sources
@@ -214,11 +215,11 @@
   (when (get-option :debug)
     (println "scanning source jar for" (repo/artifact-version-key artifact)))
 
-  (if (and (get-option :scan-sources) (repo/local-artifact? "sources" "jar" artifact))
+  (if (and (get-option :scan-sources) (mvn/local-artifact? "sources" "jar" artifact))
     (do
       (sf/create-dir (io/as-file "scandir"))
-      (z/unzip-file (str (repo/artifact-version-local-path artifact)
-                         "/" (repo/artifact-filename "sources" "jar" artifact)) "scandir")
+      (z/unzip-file (str (mvn/artifact-version-local-path artifact)
+                         "/" (mvn/artifact-filename "sources" "jar" artifact)) "scandir")
 
       (let [notice (read-notice)
             updated (update artifact :copyrights set/union (copyrights-from-dir "scandir"))]
