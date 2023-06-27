@@ -155,7 +155,17 @@ the excel sheet with the information for license reports.")
       (handle))))
 
 (comment
+  ;; REPL main calls
+  ; generate an excel report
   (-main "--debug" "-b" ".." "-r" "-f" "xls" "-i" "foss-report/txt2spdx.json")
+  ; update txt2spdx mapping
+  (-main "--debug" "-b" ".." "-u" "-i" "foss-report/txt2spdx.json")
+  ; display help
   (-main "-h")
+  ; download licenses
+  (-main "-s")
+  ; download sources
+  (-main "-s")
+  ; scan sources
   (-main "-y")
   )
