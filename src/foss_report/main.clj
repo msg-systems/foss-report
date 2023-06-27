@@ -163,7 +163,7 @@ the excel sheet with the information for license reports.")
   ; display help
   (-main "-h")
   ; download licenses
-  (-main "-s")
+  (-main "-l")
   ; download sources
   (-main "-s")
   ; scan sources
