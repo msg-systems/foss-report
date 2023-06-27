@@ -1,4 +1,4 @@
-(defproject group.msg/foss-report "0.6.4"
+(defproject group.msg/foss-report "0.6.5-SNAPSHOT"
   :description "Generate various reports regarding foss licenses."
 
   ; use dependencies from deps.edn
@@ -14,7 +14,17 @@
                  [org.soulspace.clj/clj.java "0.9.1"]
                  [org.soulspace.clj/cmp.poi "0.6.4"]
                  [org.soulspace.clj/tools.repository "0.3.7"]]
-  
+
   :test-paths ["test"]
   :uberjar-name "foss-report.jar"
-  :main foss-report.main)
+  :main foss-report.main
+
+  :profiles {:dev {:dependencies [[org.clojure/test.check "1.1.1"]
+                                  [djblue/portal "0.37.1"]
+                                  [criterium "0.4.6"]
+                                  [com.clojure-goes-fast/clj-java-decompiler "0.3.4"]
+                                  [expound/expound "0.9.0"]]
+                   :global-vars {*warn-on-reflection* true}}}
+
+  :scm {:name "git" :url "https://github.com/msg-systems/foss-report"}
+  :deploy-repositories [["clojars" {:sign-releases false :url "https://clojars.org/repo"}]])
