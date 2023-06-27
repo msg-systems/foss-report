@@ -79,7 +79,7 @@
        (doall) ; realize lazy seq into collection of sets
        (reduce set/union)
        (into (sorted-set))
-       (user/data-tapper)
+       ; (user/data-tapper)
        ))
 
 (defn new-spdx-mapping
